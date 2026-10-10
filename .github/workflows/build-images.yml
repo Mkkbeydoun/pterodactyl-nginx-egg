@@ -1,0 +1,57 @@
+name: Build images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - ".github/workflows/build-images.yml"
+  schedule:
+    # Weekly rebuild to pick up nginx/PHP security updates from Alpine
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: "PHP ${{ matrix.php }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.3", "8.4", "8.5"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build time
+        id: build
+        run: echo "created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      # The build time goes into the image and onto the published tag, start.sh compares
+      # the two to tell a server its image is outdated
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./docker
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            PHP_VERSION=${{ matrix.php }}
+            IMAGE_BUILD=${{ steps.build.outputs.created }}
+          annotations: |
+            index:org.opencontainers.image.created=${{ steps.build.outputs.created }}
+            index:org.opencontainers.image.revision=${{ github.sha }}
+          pull: true
+          push: true
+          tags: ghcr.io/mkkbeydoun/pterodactyl-nginx-egg:php${{ matrix.php }}

@@ -1,0 +1,97 @@
+name: Release egg
+
+# Publishes egg-nginx-webhost.json as a GitHub release named after the EGG_VERSION in its
+# install script (e.g. v1.0.0). Bump EGG_VERSION to make a new release.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "egg-nginx-webhost.json"
+  workflow_dispatch:
+    inputs:
+      republish:
+        description: "Replace the egg in this version's existing release without bumping EGG_VERSION"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# Never let two runs create the same release at once
+concurrency:
+  group: release-egg
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Full history and tags, to check the release's tag is still on this branch
+          fetch-depth: 0
+
+      - name: Read EGG_VERSION
+        id: egg
+        run: |
+          # tr: the panel saves the install script with Windows line endings
+          version=$(jq -r '.scripts.installation.script' egg-nginx-webhost.json \
+            | tr -d '\r' \
+            | sed -n 's/^EGG_VERSION="\([^"]*\)"$/\1/p' | head -n 1)
+          if [ -z "${version}" ]; then
+            echo "::error::EGG_VERSION not found in the egg's install script"
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Create the release if this version doesn't have one
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.egg.outputs.version }}
+          REPUBLISH: ${{ inputs.republish }}
+        run: |
+          move_tag_here() {
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" \
+              -f sha="${GITHUB_SHA}" -F force=true >/dev/null
+            echo "Moved ${TAG} from ${1} to ${GITHUB_SHA}."
+          }
+          if [ "$(gh release view "${TAG}" --json isDraft --jq .isDraft 2>/dev/null)" = "false" ]; then
+            tag_sha=$(git rev-parse --verify --quiet "refs/tags/${TAG}^{commit}" || true)
+            gh release download "${TAG}" --pattern egg-nginx-webhost.json --output "${RUNNER_TEMP}/released.json"
+            if cmp -s egg-nginx-webhost.json "${RUNNER_TEMP}/released.json"; then
+              # After a history rewrite (force-push) the tag can point to a commit that is no
+              # longer on this branch: move it to this commit, which has the same egg
+              if [ -n "${tag_sha}" ] && ! git merge-base --is-ancestor "${tag_sha}" HEAD; then
+                move_tag_here "${tag_sha}"
+              fi
+              echo "Release ${TAG} already exists with this egg, nothing else to do."
+              exit 0
+            fi
+            if [ "${REPUBLISH}" = "true" ]; then
+              # Run by hand with "republish": swap the egg in the existing release
+              gh release upload "${TAG}" egg-nginx-webhost.json --clobber
+              if [ "${tag_sha}" != "${GITHUB_SHA}" ]; then
+                move_tag_here "${tag_sha}"
+              fi
+              echo "Replaced egg-nginx-webhost.json in release ${TAG}."
+              exit 0
+            fi
+            echo "::error::egg-nginx-webhost.json changed but EGG_VERSION is still ${TAG#v}. Bump EGG_VERSION, or run this workflow by hand with \"republish\" ticked to replace the egg in ${TAG}."
+            exit 1
+          fi
+          cat > notes.md <<'EOF'
+          ## Install
+
+          1. Download `egg-nginx-webhost.json` below.
+          2. In the panel: **Admin → Nests → Import Egg**, upload it.
+          3. Create a server with the egg, pick a PHP version (Docker Image), and visit `http://ip:port`.
+
+          ## Update from an older version
+
+          **Admin → Nests → (nest) → Nginx Webhost → Update Egg** with this file (not Import Egg, that makes a second copy), then **Reinstall** your servers.
+          Reinstalling replaces `nginx/`, `php-fpm/` and `start.sh` on each server (`webroot/` is kept), so back up any edits to them first.
+          EOF
+          gh release create "${TAG}" egg-nginx-webhost.json \
+            --title "${TAG}" \
+            --notes-file notes.md \
+            --target "${GITHUB_SHA}"
