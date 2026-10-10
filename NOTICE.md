@@ -2,7 +2,7 @@
 
 **Nginx Webhost Egg**
 
-Copyright © Mkkbeydoun and contributors, MIT License (see [LICENSE.md](LICENSE.md))
+Copyright © Mkkbeydoun and contributors, MIT License (see [LICENSE](LICENSE))
 
 The MIT license covers my own work in this repository. Parts of this project are based
 on earlier work and stay under their own licenses.
