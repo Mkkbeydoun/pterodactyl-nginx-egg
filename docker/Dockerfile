@@ -11,7 +11,7 @@ FROM alpine:${ALPINE_VERSION}
 # OPcache is built into PHP 8.5+; older versions ship it as a package.
 ARG PHP_VERSION=8.5
 
-LABEL org.opencontainers.image.source="https://github.com/Mkkbeydoun/pterodactyl-nginx-egg" \
+LABEL org.opencontainers.image.source="https://github.com/Rustix-Development/pterodactyl-nginx-egg" \
       org.opencontainers.image.description="nginx + PHP-FPM for the Pterodactyl Nginx Webhost egg" \
       org.opencontainers.image.licenses="MIT"
 
