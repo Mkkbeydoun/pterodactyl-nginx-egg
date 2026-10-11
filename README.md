@@ -1,7 +1,7 @@
 # Nginx Webhost Egg
 
-[![Latest release](https://img.shields.io/github/v/release/Mkkbeydoun/pterodactyl-nginx-egg?label=egg)](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/releases/latest)
-[![Build images](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/actions/workflows/build-images.yml/badge.svg)](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/actions/workflows/build-images.yml)
+[![Latest release](https://img.shields.io/github/v/release/Rustix-Development/pterodactyl-nginx-egg?label=egg)](https://github.com/Rustix-Development/pterodactyl-nginx-egg/releases/latest)
+[![Build images](https://github.com/Rustix-Development/pterodactyl-nginx-egg/actions/workflows/build-images.yml/badge.svg)](https://github.com/Rustix-Development/pterodactyl-nginx-egg/actions/workflows/build-images.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A [Pterodactyl](https://pterodactyl.io) egg for hosting PHP and static websites with
@@ -27,8 +27,8 @@ A [Pterodactyl](https://pterodactyl.io) egg for hosting PHP and static websites 
 
 ## Install
 
-1. Download [`egg-nginx-webhost.json`](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/releases/latest/download/egg-nginx-webhost.json)
-   from the [latest release](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/releases/latest).
+1. Download [`egg-nginx-webhost.json`](https://github.com/Rustix-Development/pterodactyl-nginx-egg/releases/latest/download/egg-nginx-webhost.json)
+   from the [latest release](https://github.com/Rustix-Development/pterodactyl-nginx-egg/releases/latest).
 2. In the panel: **Admin → Nests → Import Egg**, upload it into the nest you want.
 3. Create a server with the egg and pick a PHP version under **Docker Image**.
 4. Once it has installed, start it and visit `http://<node-ip>:<port>`. You should see the
@@ -123,7 +123,7 @@ only into an empty `webroot/`. Your other website files are kept.
 Every time a server starts it checks for updates in the background and says in the console if:
 
 - **the egg has an update**: download `egg-nginx-webhost.json` from the
-  [latest release](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/releases/latest), then
+  [latest release](https://github.com/Rustix-Development/pterodactyl-nginx-egg/releases/latest), then
   **Admin → Nests → (nest) → Nginx Webhost → Update Egg** with it (not *Import Egg*, that
   makes a second copy), and **Reinstall** the server.
 - **the Docker image has an update**: restart the server, the panel downloads the latest
@@ -145,7 +145,7 @@ Turn it off per server with the *Update Check* variable.
 - **Uploads are rejected**: raise `upload_max_filesize` and `post_max_size` in
   `php-fpm/php.ini` and `client_max_body_size` in `nginx/conf.d/default.conf` together.
 
-Found a bug or want a feature? [Open an issue](https://github.com/Mkkbeydoun/pterodactyl-nginx-egg/issues).
+Found a bug or want a feature? [Open an issue](https://github.com/Rustix-Development/pterodactyl-nginx-egg/issues).
 
 ## License
 

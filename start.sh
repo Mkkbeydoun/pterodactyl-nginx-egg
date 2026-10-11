@@ -1,7 +1,7 @@
 #!/bin/ash
 # Starts PHP-FPM and nginx for the Nginx Webhost egg.
 
-EGG_REPO="Mkkbeydoun/pterodactyl-nginx-egg"
+EGG_REPO="Rustix-Development/pterodactyl-nginx-egg"
 EGG_IMAGE="mkkbeydoun/pterodactyl-nginx-egg"
 
 GREEN="\033[0;32m"
