@@ -92,7 +92,7 @@ $mail->Password = getenv('SMTP_PASSWORD');
 
 ## What's in the image
 
-The images are `ghcr.io/mkkbeydoun/pterodactyl-nginx-egg:php8.3`, `:php8.4` and `:php8.5`,
+The images are `ghcr.io/rustix-development/pterodactyl-nginx-egg:php8.3`, `:php8.4` and `:php8.5`,
 built from [`docker/Dockerfile`](docker/Dockerfile) on Alpine with nginx, PHP-FPM,
 Composer 2 and Git.
 
@@ -128,7 +128,7 @@ Every time a server starts it checks for updates in the background and says in t
   makes a second copy), and **Reinstall** the server.
 - **the Docker image has an update**: restart the server, the panel downloads the latest
   image on every start. If it keeps showing, run
-  `docker pull ghcr.io/mkkbeydoun/pterodactyl-nginx-egg:php8.x` on the node to see why.
+  `docker pull ghcr.io/rustix-development/pterodactyl-nginx-egg:php8.x` on the node to see why.
 - **the server's PHP version is no longer offered**, or the server isn't using one of this
   egg's images: **Admin → Servers → server → Startup → Docker Image**, pick one of the
   egg's images.

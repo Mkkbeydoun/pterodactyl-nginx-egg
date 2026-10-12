@@ -10,9 +10,9 @@
     "description": "Host any PHP or static website with nginx + PHP-FPM.\n\n- Composer: list packages in \"Composer modules\" and they're installed on startup\n- WordPress: turn on the WordPress option when creating the server\n- Git: clone your site from a Git repo, optionally pulling updates on every start\n- Mail, Site, Discord, Google and database variables are passed to PHP, so sites read them with getenv() instead of hardcoding them\n\nBased on the WebHost egg by Sigma Productions (originally tenten8401\/pterodactyl-nginx).",
     "features": [],
     "docker_images": {
-        "PHP 8.5": "ghcr.io\/mkkbeydoun\/pterodactyl-nginx-egg:php8.5",
-        "PHP 8.4": "ghcr.io\/mkkbeydoun\/pterodactyl-nginx-egg:php8.4",
-        "PHP 8.3": "ghcr.io\/mkkbeydoun\/pterodactyl-nginx-egg:php8.3"
+        "PHP 8.5": "ghcr.io\/rustix-development\/pterodactyl-nginx-egg:php8.5",
+        "PHP 8.4": "ghcr.io\/rustix-development\/pterodactyl-nginx-egg:php8.4",
+        "PHP 8.3": "ghcr.io\/rustix-development\/pterodactyl-nginx-egg:php8.3"
     },
     "file_denylist": [],
     "startup": "{{STARTUP_CMD}}",
