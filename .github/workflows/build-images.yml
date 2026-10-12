@@ -54,4 +54,4 @@ jobs:
             index:org.opencontainers.image.revision=${{ github.sha }}
           pull: true
           push: true
-          tags: ghcr.io/mkkbeydoun/pterodactyl-nginx-egg:php${{ matrix.php }}
+          tags: ghcr.io/rustix-development/pterodactyl-nginx-egg:php${{ matrix.php }}
