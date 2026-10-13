@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in the egg or its Docker images doesn't work as described.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Egg version
+      description: Shown in the server console at startup, or the release you downloaded.
+      placeholder: 1.0.1
+    validations:
+      required: true
+  - type: dropdown
+    id: php
+    attributes:
+      label: PHP version (Docker image)
+      options:
+        - "8.5"
+        - "8.4"
+        - "8.3"
+    validations:
+      required: true
+  - type: input
+    id: panel
+    attributes:
+      label: Panel version
+      placeholder: 1.11.11
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Anything relevant from the server console, the install log or the files in logs/.
+      render: text
