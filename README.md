@@ -129,6 +129,11 @@ Every time a server starts it checks for updates in the background and says in t
 - **the Docker image has an update**: restart the server, the panel downloads the latest
   image on every start. If it keeps showing, run
   `docker pull ghcr.io/rustix-development/pterodactyl-nginx-egg:php8.x` on the node to see why.
+- **the server still uses an image from the old address** `ghcr.io/mkkbeydoun/pterodactyl-nginx-egg`
+  (servers created before v1.0.1): those images are no longer updated, and updating the egg
+  doesn't change an existing server's image. In the server's **Startup** tab (or
+  **Admin → Servers → server → Startup**), set **Docker Image** to
+  `ghcr.io/rustix-development/pterodactyl-nginx-egg:php8.x` with the same PHP version, then restart.
 - **the server's PHP version is no longer offered**, or the server isn't using one of this
   egg's images: **Admin → Servers → server → Startup → Docker Image**, pick one of the
   egg's images.

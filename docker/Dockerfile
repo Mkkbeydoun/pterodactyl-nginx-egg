@@ -43,8 +43,10 @@ ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 # Used by start.sh's update check; the workflow passes the build time (also set as an index annotation)
+# and the image's name, so a server on an image from an old address can be told to switch
 ARG IMAGE_BUILD=dev
-ENV PHP_IMAGE_VERSION=${PHP_VERSION} IMAGE_BUILD=${IMAGE_BUILD}
+ARG IMAGE_NAME=""
+ENV PHP_IMAGE_VERSION=${PHP_VERSION} IMAGE_BUILD=${IMAGE_BUILD} IMAGE_NAME=${IMAGE_NAME}
 
 STOPSIGNAL SIGINT
 

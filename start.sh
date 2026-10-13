@@ -93,8 +93,16 @@ check_image_update() {
         log_success "Docker image is up to date (PHP ${PHP_IMAGE_VERSION}, built ${IMAGE_BUILD%%T*})."
     else
         log_update "Docker image update available: built ${latest%%T*}, this server runs ${IMAGE_BUILD%%T*}."
-        log_update "  Restart the server to download it (the panel pulls the latest image on every start)."
-        log_update "  If this keeps showing, the node's image pull is failing and it keeps the old image: run 'docker pull ghcr.io/${EGG_IMAGE}:php${PHP_IMAGE_VERSION}' on the node to see why."
+        if [ -z "${IMAGE_NAME}" ]; then
+            # Only images from before the move to rustix-development lack IMAGE_NAME. Their old
+            # address (ghcr.io/mkkbeydoun) is never rebuilt, so restarting can't update them.
+            log_update "  This server's Docker image comes from the old address ghcr.io/mkkbeydoun/pterodactyl-nginx-egg, which no longer gets updates."
+            log_update "  Change it to ghcr.io/${EGG_IMAGE}:php${PHP_IMAGE_VERSION} in the server's Startup tab -> Docker Image"
+            log_update "  (or Admin -> Servers -> this server -> Startup -> Docker Image), then restart the server."
+        else
+            log_update "  Restart the server to download it (the panel pulls the latest image on every start)."
+            log_update "  If this keeps showing, the node's image pull is failing and it keeps the old image: run 'docker pull ghcr.io/${EGG_IMAGE}:php${PHP_IMAGE_VERSION}' on the node to see why."
+        fi
     fi
 
     # The weekly rebuild stops if GitHub disables the scheduled workflow (60 days without repo activity)
