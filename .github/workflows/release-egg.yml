@@ -27,9 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          # Full history and tags, to check the release's tag is still on this branch
-          fetch-depth: 0
 
       - name: Read EGG_VERSION
         id: egg
@@ -50,29 +47,16 @@ jobs:
           TAG: v${{ steps.egg.outputs.version }}
           REPUBLISH: ${{ inputs.republish }}
         run: |
-          move_tag_here() {
-            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/tags/${TAG}" \
-              -f sha="${GITHUB_SHA}" -F force=true >/dev/null
-            echo "Moved ${TAG} from ${1} to ${GITHUB_SHA}."
-          }
           if [ "$(gh release view "${TAG}" --json isDraft --jq .isDraft 2>/dev/null)" = "false" ]; then
-            tag_sha=$(git rev-parse --verify --quiet "refs/tags/${TAG}^{commit}" || true)
             gh release download "${TAG}" --pattern egg-nginx-webhost.json --output "${RUNNER_TEMP}/released.json"
             if cmp -s egg-nginx-webhost.json "${RUNNER_TEMP}/released.json"; then
-              # After a history rewrite (force-push) the tag can point to a commit that is no
-              # longer on this branch: move it to this commit, which has the same egg
-              if [ -n "${tag_sha}" ] && ! git merge-base --is-ancestor "${tag_sha}" HEAD; then
-                move_tag_here "${tag_sha}"
-              fi
-              echo "Release ${TAG} already exists with this egg, nothing else to do."
+              echo "Release ${TAG} already exists with this egg, nothing to do."
               exit 0
             fi
             if [ "${REPUBLISH}" = "true" ]; then
-              # Run by hand with "republish": swap the egg in the existing release
+              # Run by hand with "republish": swap the egg in the existing release. The tag
+              # stays where it is, release tags are protected and can't be moved
               gh release upload "${TAG}" egg-nginx-webhost.json --clobber
-              if [ "${tag_sha}" != "${GITHUB_SHA}" ]; then
-                move_tag_here "${tag_sha}"
-              fi
               echo "Replaced egg-nginx-webhost.json in release ${TAG}."
               exit 0
             fi

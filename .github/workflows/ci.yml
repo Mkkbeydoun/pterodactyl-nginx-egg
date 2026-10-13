@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Validate the egg
+        run: |
+          jq -e '.meta.version == "PTDL_v2"' egg-nginx-webhost.json >/dev/null
+          # tr: the panel saves the install script with Windows line endings
+          version=$(jq -r '.scripts.installation.script' egg-nginx-webhost.json \
+            | tr -d '\r' \
+            | sed -n 's/^EGG_VERSION="\([^"]*\)"$/\1/p' | head -n 1)
+          if [ -z "${version}" ]; then
+            echo "::error::EGG_VERSION not found in the egg's install script"
+            exit 1
+          fi
+          echo "Egg version ${version}"
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Build only, the images are published by build-images.yml
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./docker
+          platforms: linux/amd64
+          build-args: |
+            PHP_VERSION=8.5
+          pull: true
+          push: false
