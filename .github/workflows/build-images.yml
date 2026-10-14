@@ -49,6 +49,7 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php }}
             IMAGE_BUILD=${{ steps.build.outputs.created }}
+            IMAGE_NAME=ghcr.io/rustix-development/pterodactyl-nginx-egg
           annotations: |
             index:org.opencontainers.image.created=${{ steps.build.outputs.created }}
             index:org.opencontainers.image.revision=${{ github.sha }}
